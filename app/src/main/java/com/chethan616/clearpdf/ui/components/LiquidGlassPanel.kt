@@ -39,8 +39,11 @@ fun Modifier.liquidGlassPanel(
         shape = { RoundedRectangle(28f.dp) },
         effects = {
             vibrancy()
-            blur(8f.dp.toPx())
-            lens(20f.dp.toPx(), 40f.dp.toPx(), depthEffect = true)
+            // Keep the glass look but avoid a full blurred re-render on every list item. The older
+            // values were expensive enough to make scrolling and screen swaps feel heavy on mid-range
+            // devices, especially with many cards on screen simultaneously.
+            blur(3f.dp.toPx())
+            lens(10f.dp.toPx(), 18f.dp.toPx(), depthEffect = false)
         },
         highlight = { Highlight(style = HighlightStyle.Default(angle = uiSensor.gravityAngle, falloff = 2f)) },
         shadow = { Shadow(radius = 8f.dp, color = Color.Black.copy(alpha = 0.1f)) },

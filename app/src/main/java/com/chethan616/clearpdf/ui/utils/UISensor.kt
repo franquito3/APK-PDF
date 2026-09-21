@@ -32,9 +32,10 @@ fun rememberUISensor(): UISensor {
 
 class UISensor(context: Context) {
     private companion object {
-        const val SMOOTHING_ALPHA = 0.5f
-        const val ANGLE_DELTA_THRESHOLD_DEG = 0.35f
-        const val GRAVITY_DELTA_THRESHOLD = 0.004f
+        const val SMOOTHING_ALPHA = 0.25f
+        const val ANGLE_DELTA_THRESHOLD_DEG = 0.75f
+        const val GRAVITY_DELTA_THRESHOLD = 0.006f
+        const val SENSOR_PUBLISH_INTERVAL_MS = 80L
     }
 
     var gravityAngle: Float by mutableFloatStateOf(45f)
@@ -43,6 +44,7 @@ class UISensor(context: Context) {
         private set
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private var lastPublishMs = 0L
     private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val listener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
@@ -54,15 +56,17 @@ class UISensor(context: Context) {
 
                 val rawAngle = atan2(y, x) * (180f / PI).toFloat()
                 val filteredAngle = gravityAngle * (1f - SMOOTHING_ALPHA) + rawAngle * SMOOTHING_ALPHA
-                if (abs(filteredAngle - gravityAngle) >= ANGLE_DELTA_THRESHOLD_DEG) {
+                val now = System.currentTimeMillis()
+                if (abs(filteredAngle - gravityAngle) >= ANGLE_DELTA_THRESHOLD_DEG && now - lastPublishMs >= SENSOR_PUBLISH_INTERVAL_MS) {
                     gravityAngle = filteredAngle
+                    lastPublishMs = now
                 }
 
                 val normalizedGravity = Offset(x / norm, y / norm)
                 val filteredGravity = gravity * (1f - SMOOTHING_ALPHA) + normalizedGravity * SMOOTHING_ALPHA
                 val dx = filteredGravity.x - gravity.x
                 val dy = filteredGravity.y - gravity.y
-                if (dx * dx + dy * dy >= GRAVITY_DELTA_THRESHOLD * GRAVITY_DELTA_THRESHOLD) {
+                if (dx * dx + dy * dy >= GRAVITY_DELTA_THRESHOLD * GRAVITY_DELTA_THRESHOLD && now - lastPublishMs >= SENSOR_PUBLISH_INTERVAL_MS) {
                     gravity = filteredGravity
                 }
             }
@@ -71,7 +75,10 @@ class UISensor(context: Context) {
     }
 
     fun start() {
-        sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_UI)
+        // UI sensors are only used for cosmetic highlight direction. Using a slightly less frequent
+        // update cadence keeps the glass effect feeling responsive without repainting the entire
+        // screen on every tiny device tilt.
+        sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_GAME)
     }
 
     fun stop() {

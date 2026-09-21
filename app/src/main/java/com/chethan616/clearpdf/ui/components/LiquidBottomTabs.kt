@@ -169,13 +169,10 @@ fun LiquidBottomTabs(
                     shape = { Capsule },
                     effects = {
                         vibrancy()
-                        // Half the original 8 dp. This is the tab bar's own surface only — the
-                        // selection capsule below draws through `tabsBackdrop`, which keeps its
-                        // own blur, so softening the bar does not soften the slider riding on it.
-                        // The lens is untouched: at 24x24 it is what gives the bar its edge, and
-                        // dropping the blur without it would flatten the whole capsule.
-                        blur(4f.dp.toPx())
-                        lens(24f.dp.toPx(), 24f.dp.toPx())
+                        // Keep the tab bar readable while avoiding the expensive blur/lens stack that
+                        // was making tab changes and scrolling feel heavy on mid-range devices.
+                        blur(2f.dp.toPx())
+                        lens(10f.dp.toPx(), 12f.dp.toPx())
                     },
                     layerBlock = {
                         val progress = dampedDragAnimation.pressProgress
@@ -212,10 +209,10 @@ fun LiquidBottomTabs(
                         effects = {
                             val progress = dampedDragAnimation.pressProgress
                             vibrancy()
-                            blur(8f.dp.toPx())
+                            blur(3f.dp.toPx())
                             lens(
-                                24f.dp.toPx() * progress,
-                                24f.dp.toPx() * progress
+                                10f.dp.toPx() * progress,
+                                12f.dp.toPx() * progress
                             )
                         },
                         highlight = {
