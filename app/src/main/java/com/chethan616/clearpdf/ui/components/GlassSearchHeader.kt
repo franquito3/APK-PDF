@@ -324,30 +324,8 @@ fun GlassSearchPill(
                 scaleY = enterScale
                 alpha = enterAlpha
             }
-            // Two stacks, one shape. In the viewers the pill has to be the same material as the top
-            // bar's title pill, which is a plain LiquidButton — lighter blur, shallower lens, and the
-            // library's default highlight/shadow rather than the gravity-angled app-chrome ones.
-            .then(
-                if (viewerChrome) {
-                    Modifier.viewerGlass(backdrop, containerColor, shape = { Capsule })
-                } else {
-                    Modifier.drawBackdrop(
-                        backdrop = backdrop,
-                        shape = { Capsule },
-                        effects = {
-                            vibrancy()
-                            blur(8f.dp.toPx())
-                            lens(16f.dp.toPx(), 32f.dp.toPx())
-                        },
-                        highlight = {
-                            Highlight(style = HighlightStyle.Default(angle = uiSensor.gravityAngle, falloff = 2f))
-                        },
-                        shadow = { Shadow(radius = 6f.dp, color = Color.Black.copy(alpha = 0.08f)) },
-                        innerShadow = { InnerShadow(radius = 2f.dp, alpha = 0.25f) },
-                        onDrawSurface = { drawRect(containerColor) }
-                    )
-                }
-            )
+            .background(containerColor)
+            .clip(Capsule)
             .height(GlassSearchPillHeight)
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -193,14 +193,7 @@ fun HomeScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    var isVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { isVisible = true }
-
     val density = LocalDensity.current.density
-    // One transition for the whole entrance. Previously six independent
-    // animateFloatAsState calls ran on three frame clocks; this is one clock with a
-    // per-section delay, so the sections can't drift apart on a busy frame.
-    val entrance = updateTransition(isVisible, label = "homeEntrance")
 
     val query = recentQuery.trim()
     val byKind = recentFilter?.let { kind -> recents.filter { docKindOf(it.name) == kind } } ?: recents
@@ -226,7 +219,7 @@ fun HomeScreen(
                     active = searchActive,
                     onActiveChange = { searchActive = it },
                     searchHint = stringResource(R.string.recents_search_hint),
-                    modifier = entrance.entranceModifier(0, density),
+                    modifier = Modifier,
                     titleFontFamily = SourGummyFontFamily
                 )
             }
@@ -251,7 +244,6 @@ fun HomeScreen(
                     Column(
                         Modifier
                             .fillMaxWidth()
-                            .then(entrance.entranceModifier(1, density))
                             .liquidGlassPanel(backdrop, uiSensor)
                             .padding(horizontal = 20.dp, vertical = 18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -336,7 +328,6 @@ fun HomeScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .then(entrance.entranceModifier(2, density))
                         .liquidGlassPanel(backdrop, uiSensor)
                         // The container's own minimise animation. `animateContentSize` sits INSIDE the
                         // glass (after `liquidGlassPanel`, which is a pure draw modifier that paints at

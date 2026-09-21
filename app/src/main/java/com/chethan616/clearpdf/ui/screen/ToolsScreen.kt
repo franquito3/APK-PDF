@@ -155,12 +155,6 @@ fun ToolsScreen(
         )
     )
 
-    var isVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { isVisible = true }
-    // One transition, one frame clock. Sections stagger via delayMillis instead of each running its
-    // own animateFloatAsState.
-    val entrance = updateTransition(isVisible, label = "toolsEntrance")
-
     val trimmed = query.trim()
     val searching = trimmed.isNotBlank()
     val results = if (!searching) emptyList() else {
@@ -177,7 +171,7 @@ fun ToolsScreen(
         header = { headerBackdrop ->
             // Holds a glass title pill and a glass circle, so it fades in place. Pinned above
             // the list, sampling the content layer so the tiles refract through it as they scroll.
-            Box(entrance.glassFadeModifier(0)) {
+            Box {
                 GlassSearchHeader(
                     title = stringResource(R.string.tools_title),
                     backdrop = headerBackdrop,
@@ -206,7 +200,7 @@ fun ToolsScreen(
                     )
                 } else {
                     Column(
-                        Modifier.fillMaxWidth().liquidGlassPanel(backdrop, uiSensor).padding(12.dp),
+                        Modifier.fillMaxWidth().padding(12.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         results.forEach { tool ->
@@ -217,21 +211,18 @@ fun ToolsScreen(
             }
         } else {
             item(key = "primary") {
-                Box(entrance.tileEntranceModifier(0, density)) {
+                Box {
                     ToolTileWide(openPdf.title, openPdf.subtitle, openPdf.accent, openPdf.icon, openPdf.onClick)
                 }
             }
 
             sections.forEachIndexed { index, section ->
                 item(key = section.label) {
-                    // Five stagger slots per section — the label, then its four tiles — so the whole
-                    // screen cascades top-to-bottom instead of four sections restarting in place.
-                    val base = 1 + index * 5
                     Column {
-                        Box(entrance.tileEntranceModifier(base, density)) {
+                        Box {
                             GlassSectionLabel(section.label)
                         }
-                        ToolSectionPanel(section, backdrop, uiSensor, entrance, base, density)
+                        ToolSectionPanel(section)
                     }
                 }
             }
@@ -246,18 +237,11 @@ fun ToolsScreen(
  */
 @Composable
 private fun ToolSectionPanel(
-    section: ToolSection,
-    backdrop: LayerBackdrop,
-    uiSensor: UISensor,
-    entrance: Transition<Boolean>,
-    base: Int,
-    density: Float
+    section: ToolSection
 ) {
     Column(
         Modifier
             .fillMaxWidth()
-            .then(entrance.glassFadeModifier(base))
-            .liquidGlassPanel(backdrop, uiSensor)
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -272,9 +256,7 @@ private fun ToolSectionPanel(
                         accent = tool.accent,
                         icon = tool.icon,
                         onClick = tool.onClick,
-                        modifier = Modifier
-                            .weight(1f)
-                            .then(entrance.tileEntranceModifier(base + 1 + rowIdx * 2 + colIdx, density))
+                        modifier = Modifier.weight(1f)
                     )
                 }
                 // Keep a lone trailing tile at half width instead of letting it stretch.
