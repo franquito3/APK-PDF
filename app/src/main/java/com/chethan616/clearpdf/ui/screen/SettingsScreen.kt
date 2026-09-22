@@ -287,12 +287,15 @@ fun SettingsScreen(
                 options.forEach { option ->
                     val isSelected = themeMode == option.idx
                     val cc = if (isSelected) Color.White else (if (isLight) Color(0xFF2C2C2E) else Color(0xFFE0E0E0))
-                    LiquidButton(
-                        onClick = { onThemeModeChanged(option.idx) },
-                        backdrop = backdrop,
-                        tint = if (isSelected) option.activeColor else Color.Unspecified,
-                        surfaceColor = if (isSelected) Color.Unspecified else (if (isLight) Color.Black.copy(0.06f) else Color.White.copy(0.10f)),
-                        modifier = Modifier.weight(1f)
+                    val background = if (isSelected) option.activeColor else (if (isLight) Color.Black.copy(0.04f) else Color.White.copy(0.07f))
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(background)
+                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { onThemeModeChanged(option.idx) }
+                            .padding(horizontal = 8.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Row(
                             Modifier.fillMaxWidth(),
@@ -352,18 +355,20 @@ fun SettingsScreen(
                 langs.forEach { opt ->
                     val isSelected = selectedLocale == opt.code
                     val cc = if (isSelected) Color.White else (if (isLight) Color(0xFF2C2C2E) else Color(0xFFE0E0E0))
-                    LiquidButton(
-                        onClick = { onLocaleChanged(opt.code) },
-                        backdrop = backdrop,
-                        tint = if (isSelected) accent else Color.Unspecified,
-                        surfaceColor = if (isSelected) Color.Unspecified else (if (isLight) Color.Black.copy(0.06f) else Color.White.copy(0.10f)),
-                        modifier = Modifier.weight(1f)
+                    val background = if (isSelected) accent else (if (isLight) Color.Black.copy(0.04f) else Color.White.copy(0.07f))
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(background)
+                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { onLocaleChanged(opt.code) }
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         BasicText(
                             opt.label,
                             style = TextStyle(cc, 13.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium),
-                            maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(vertical = 4.dp)
+                            maxLines = 1, overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -425,22 +430,28 @@ fun SettingsScreen(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                LiquidButton(
-                    onClick = { folderPicker.launch(null) },
-                    backdrop = backdrop,
-                    tint = Color(0xFF1976D2),
-                    modifier = Modifier.weight(1f)
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF1976D2))
+                        .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { folderPicker.launch(null) }
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     BasicText(stringResource(R.string.settings_change_folder), style = TextStyle(Color.White, 13.sp, fontWeight = FontWeight.SemiBold))
                 }
                 if (saveUri != null) {
-                    LiquidButton(
-                        onClick = {
-                            SaveLocationManager.clearSaveLocation(context)
-                            saveUri = null
-                        },
-                        backdrop = backdrop,
-                        surfaceColor = Color.White.copy(0.08f)
+                    Box(
+                        Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (isLight) Color.Black.copy(0.04f) else Color.White.copy(0.07f))
+                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) {
+                                SaveLocationManager.clearSaveLocation(context)
+                                saveUri = null
+                            }
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         BasicText(stringResource(R.string.settings_reset), style = TextStyle(text, 13.sp, fontWeight = FontWeight.SemiBold))
                     }
@@ -595,16 +606,19 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LiquidButton(
-                        onClick = { wallpaperPicker.launch(arrayOf("image/*")) },
-                        backdrop = backdrop,
-                        tint = Color(0xFF0088FF),
-                        modifier = Modifier.weight(1f)
+                    Box(
+                        Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF0088FF))
+                            .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { wallpaperPicker.launch(arrayOf("image/*")) }
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Icon(Icons.Rounded.PhotoLibrary, null, Modifier.size(16.dp), Color.White)
                             BasicText(stringResource(R.string.settings_bg_gallery), style = TextStyle(Color.White, 13.sp, fontWeight = FontWeight.SemiBold), maxLines = 1)
@@ -624,11 +638,13 @@ fun SettingsScreen(
             // Replaying the tour also clears the completion flag (see the nav graph), so quitting
             // the replay early does not leave it marked as seen-but-never-finished.
             Spacer(Modifier.height(12.dp))
-            LiquidButton(
-                onClick = onReplayOnboarding,
-                backdrop = backdrop,
-                surfaceColor = if (isLight) Color.Black.copy(0.06f) else Color.White.copy(0.10f),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(if (isLight) Color.Black.copy(0.04f) else Color.White.copy(0.07f))
+                    .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { onReplayOnboarding() }
+                    .padding(14.dp),
             ) {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -682,11 +698,14 @@ fun SettingsScreen(
             Spacer(Modifier.height(4.dp))
 
             // Star CTA
-            LiquidButton(
-                onClick = openRepo,
-                backdrop = backdrop,
-                tint = Color(0xFFFFC107),
-                modifier = Modifier.fillMaxWidth()
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFFFC107))
+                    .clickable(indication = null, interactionSource = remember { MutableInteractionSource() }) { openRepo() }
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

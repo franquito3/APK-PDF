@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
@@ -182,6 +183,28 @@ private fun isDocViewerRoute(route: String?): Boolean =
         route.startsWith(ROUTE_IMAGE_EDITOR_BASE)
     )
 
+private fun mainScreenEnterTransition(): EnterTransition =
+    androidx.compose.animation.fadeIn(
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    ) + androidx.compose.animation.scaleIn(
+        initialScale = 0.992f,
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    ) + androidx.compose.animation.slideInVertically(
+        initialOffsetY = { 6 },
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    )
+
+private fun mainScreenExitTransition(): ExitTransition =
+    androidx.compose.animation.fadeOut(
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    ) + androidx.compose.animation.scaleOut(
+        targetScale = 0.992f,
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    ) + androidx.compose.animation.slideOutVertically(
+        targetOffsetY = { 6 },
+        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    )
+
 @Composable
 fun DocsNavGraph(
     navController: NavHostController,
@@ -209,10 +232,34 @@ fun DocsNavGraph(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition = {
+            if (isDocViewerRoute(targetState.destination.route) && !isDocViewerRoute(initialState.destination.route)) {
+                EnterTransition.None
+            } else {
+                mainScreenEnterTransition()
+            }
+        },
+        exitTransition = {
+            if (isDocViewerRoute(targetState.destination.route) && !isDocViewerRoute(initialState.destination.route)) {
+                ExitTransition.None
+            } else {
+                mainScreenExitTransition()
+            }
+        },
+        popEnterTransition = {
+            if (isDocViewerRoute(initialState.destination.route) && !isDocViewerRoute(targetState.destination.route)) {
+                EnterTransition.None
+            } else {
+                mainScreenEnterTransition()
+            }
+        },
+        popExitTransition = {
+            if (isDocViewerRoute(targetState.destination.route) && !isDocViewerRoute(initialState.destination.route)) {
+                ExitTransition.None
+            } else {
+                mainScreenExitTransition()
+            }
+        }
     ) {
 
         // ── First run ──

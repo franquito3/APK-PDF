@@ -244,7 +244,8 @@ fun HomeScreen(
                     Column(
                         Modifier
                             .fillMaxWidth()
-                            .liquidGlassPanel(backdrop, uiSensor)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(if (isLight) Color(0xFFF7F7F7).copy(alpha = 0.75f) else Color(0xFF1F1F1F).copy(alpha = 0.78f))
                             .padding(horizontal = 20.dp, vertical = 18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -328,15 +329,8 @@ fun HomeScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .liquidGlassPanel(backdrop, uiSensor)
-                        // The container's own minimise animation. `animateContentSize` sits INSIDE the
-                        // glass (after `liquidGlassPanel`, which is a pure draw modifier that paints at
-                        // whatever size it measures), so the glass tracks the animated height frame by
-                        // frame — the whole panel springs shut when a row leaves, rather than the row
-                        // collapsing on its own while the panel snaps. A lightly-underdamped spring
-                        // gives the elastic "settle" bounce; because the size delta of a single removed
-                        // row is small, the re-blur this costs is a short, snappy window, not the long
-                        // spring tail the old per-row collapse used to burn.
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(if (isLight) Color(0xFFF7F7F7).copy(alpha = 0.75f) else Color(0xFF1F1F1F).copy(alpha = 0.78f))
                         .animateContentSize(
                             animationSpec = spring(dampingRatio = 0.65f, stiffness = 400f)
                         )
