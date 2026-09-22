@@ -185,24 +185,24 @@ private fun isDocViewerRoute(route: String?): Boolean =
 
 private fun mainScreenEnterTransition(): EnterTransition =
     androidx.compose.animation.fadeIn(
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     ) + androidx.compose.animation.scaleIn(
-        initialScale = 0.992f,
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        initialScale = 0.995f,
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     ) + androidx.compose.animation.slideInVertically(
-        initialOffsetY = { 6 },
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        initialOffsetY = { 4 },
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     )
 
 private fun mainScreenExitTransition(): ExitTransition =
     androidx.compose.animation.fadeOut(
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     ) + androidx.compose.animation.scaleOut(
-        targetScale = 0.992f,
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        targetScale = 0.995f,
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     ) + androidx.compose.animation.slideOutVertically(
-        targetOffsetY = { 6 },
-        animationSpec = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+        targetOffsetY = { 4 },
+        animationSpec = tween(durationMillis = 170, easing = FastOutSlowInEasing)
     )
 
 @Composable
