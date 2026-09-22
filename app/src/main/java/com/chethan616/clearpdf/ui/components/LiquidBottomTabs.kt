@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -166,7 +168,22 @@ fun LiquidBottomTabs(
                 .graphicsLayer {
                     translationX = panelOffset
                 }
-                .background(containerColor)
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { Capsule },
+                    effects = {
+                        blur(1.2f.dp.toPx())
+                        lens(4f.dp.toPx(), 7f.dp.toPx())
+                    },
+                    onDrawSurface = {
+                        drawRect(containerColor)
+                    }
+                )
+                .border(
+                    0.5f.dp,
+                    if (isLightTheme) Color.White.copy(alpha = 0.32f) else Color.White.copy(alpha = 0.08f),
+                    Capsule
+                )
                 .clip(Capsule)
                 .height(64f.dp)
                 .fillMaxWidth()
@@ -184,7 +201,17 @@ fun LiquidBottomTabs(
                 Modifier
                     .clearAndSetSemantics {}
                     .alpha(0f)
-                    .background(containerColor)
+                    .drawBackdrop(
+                        backdrop = backdrop,
+                        shape = { Capsule },
+                        effects = {
+                            blur(1.2f.dp.toPx())
+                            lens(4f.dp.toPx(), 7f.dp.toPx())
+                        },
+                        onDrawSurface = {
+                            drawRect(containerColor)
+                        }
+                    )
                     .clip(Capsule)
                     .graphicsLayer {
                         translationX = panelOffset
@@ -207,7 +234,23 @@ fun LiquidBottomTabs(
                 }
                 .then(interactiveHighlight.gestureModifier)
                 .then(dampedDragAnimation.modifier)
-                .background(accentColor.copy(alpha = if (isLightTheme) 0.12f else 0.18f))
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { Capsule },
+                    effects = {
+                        blur(1f.dp.toPx())
+                        lens(3f.dp.toPx(), 6f.dp.toPx())
+                    },
+                    onDrawSurface = {
+                        drawRect(accentColor.copy(alpha = if (isLightTheme) 0.12f else 0.18f))
+                    }
+                )
+                .shadow(0.6f.dp, shape = Capsule)
+                .border(
+                    0.5f.dp,
+                    if (isLightTheme) Color.White.copy(alpha = 0.34f) else Color.White.copy(alpha = 0.10f),
+                    Capsule
+                )
                 .clip(Capsule)
                 .height(56f.dp)
                 .fillMaxWidth(1f / tabsCount)
