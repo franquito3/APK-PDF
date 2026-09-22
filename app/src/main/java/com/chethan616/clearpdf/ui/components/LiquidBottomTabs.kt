@@ -163,6 +163,38 @@ fun LiquidBottomTabs(
             )
         }
 
+        Box(
+            Modifier
+                .padding(horizontal = 4f.dp)
+                .graphicsLayer {
+                    translationX =
+                        if (isLtr) dampedDragAnimation.value * tabWidth + panelOffset
+                        else size.width - (dampedDragAnimation.value + 1f) * tabWidth + panelOffset
+                }
+                .then(interactiveHighlight.gestureModifier)
+                .then(dampedDragAnimation.modifier)
+                .drawBackdrop(
+                    backdrop = backdrop,
+                    shape = { Capsule },
+                    effects = {
+                        blur(2.2f.dp.toPx())
+                        lens(7f.dp.toPx(), 12f.dp.toPx())
+                    },
+                    onDrawSurface = {
+                        drawRect(accentColor.copy(alpha = if (isLightTheme) 0.16f else 0.22f))
+                    }
+                )
+                .shadow(0.8f.dp, shape = Capsule)
+                .border(
+                    0.5f.dp,
+                    if (isLightTheme) Color.White.copy(alpha = 0.38f) else Color.White.copy(alpha = 0.12f),
+                    Capsule
+                )
+                .clip(Capsule)
+                .height(56f.dp)
+                .fillMaxWidth(1f / tabsCount)
+        )
+
         Row(
             Modifier
                 .graphicsLayer {
@@ -172,8 +204,8 @@ fun LiquidBottomTabs(
                     backdrop = backdrop,
                     shape = { Capsule },
                     effects = {
-                        blur(1.2f.dp.toPx())
-                        lens(4f.dp.toPx(), 7f.dp.toPx())
+                        blur(2f.dp.toPx())
+                        lens(6f.dp.toPx(), 10f.dp.toPx())
                     },
                     onDrawSurface = {
                         drawRect(containerColor)
@@ -205,8 +237,8 @@ fun LiquidBottomTabs(
                         backdrop = backdrop,
                         shape = { Capsule },
                         effects = {
-                            blur(1.2f.dp.toPx())
-                            lens(4f.dp.toPx(), 7f.dp.toPx())
+                            blur(2f.dp.toPx())
+                            lens(6f.dp.toPx(), 10f.dp.toPx())
                         },
                         onDrawSurface = {
                             drawRect(containerColor)
@@ -223,37 +255,5 @@ fun LiquidBottomTabs(
                 content = content
             )
         }
-
-        Box(
-            Modifier
-                .padding(horizontal = 4f.dp)
-                .graphicsLayer {
-                    translationX =
-                        if (isLtr) dampedDragAnimation.value * tabWidth + panelOffset
-                        else size.width - (dampedDragAnimation.value + 1f) * tabWidth + panelOffset
-                }
-                .then(interactiveHighlight.gestureModifier)
-                .then(dampedDragAnimation.modifier)
-                .drawBackdrop(
-                    backdrop = backdrop,
-                    shape = { Capsule },
-                    effects = {
-                        blur(1f.dp.toPx())
-                        lens(3f.dp.toPx(), 6f.dp.toPx())
-                    },
-                    onDrawSurface = {
-                        drawRect(accentColor.copy(alpha = if (isLightTheme) 0.12f else 0.18f))
-                    }
-                )
-                .shadow(0.6f.dp, shape = Capsule)
-                .border(
-                    0.5f.dp,
-                    if (isLightTheme) Color.White.copy(alpha = 0.34f) else Color.White.copy(alpha = 0.10f),
-                    Capsule
-                )
-                .clip(Capsule)
-                .height(56f.dp)
-                .fillMaxWidth(1f / tabsCount)
-        )
     }
 }
